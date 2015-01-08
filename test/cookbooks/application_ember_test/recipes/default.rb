@@ -37,6 +37,7 @@ application app_name do
     repository "https://github.com/InboxHealth/empty_ember_cli_app.git"
     revision "c8b3a033ead7c0c28df671aa1b05e9bf288502f4"
     distribution_link "ember_app_http_directory"
+    index_page_link "dist/index.html" => "ember_app.html"
     environment_name "production"
   end
 end

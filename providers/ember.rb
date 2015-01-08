@@ -71,13 +71,19 @@ action :before_symlink do
   execute "npm install && bower install && ember build -e #{new_resource.environment_name}" do
     cwd ember_deploy_path + '/current'
     user new_resource.owner
-    environment "HOME" => "/home/" + new_resource.owner
+    environment 'HOME' => '/home/' + new_resource.owner
   end
 end
 
 action :before_restart do
-  link(new_resource.path + "/current/" + new_resource.distribution_link) do
+  link(new_resource.path + '/current/' + new_resource.distribution_link) do
     to(ember_deploy_path + '/current/dist')
+  end
+  if new_resource.index_page_link
+    index_source, index_destination = new_resource.index_page_link.first
+    link(new_resource.path + '/current/' + index_destination) do
+      to(ember_deploy_path + '/current/' + index_source)
+    end
   end
 end
 
