@@ -17,14 +17,47 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-action :before_compile {}
+action :before_compile do
+end
 
-action :before_deploy {}
+action :before_deploy do
+end
 
-action :before_migrate {}
+action :before_migrate do
+end
 
 action :before_symlink do
-  
+
+  if new_resource.deploy_key
+    directory ember_deploy_path do
+      owner new_resource.owner
+      group new_resource.group
+      mode '0755'
+      recursive true
+    end
+    if ::File.exists?(new_resource.deploy_key)
+      deploy_key = open(new_resource.deploy_key, &:read)
+    else
+      deploy_key = new_resource.deploy_key
+    end
+    
+    file "#{ember_deploy_path}/id_deploy" do
+      content deploy_key
+      owner new_resource.owner
+      group new_resource.group
+      mode '0600'
+    end
+
+    template "#{ember_deploy_path}/deploy-ssh-wrapper" do
+      source "deploy-ssh-wrapper.erb"
+      cookbook "application"
+      owner new_resource.owner
+      group new_resource.group
+      mode "0755"
+      variables :id => new_resource.name, :deploy_to => ember_deploy_path
+    end
+  end
+
   deploy_revision ember_deploy_path do
     repo new_resource.repository
     revision new_resource.revision
@@ -32,6 +65,7 @@ action :before_symlink do
     symlinks.clear
     migrate false
     user new_resource.owner
+    ssh_wrapper "#{ember_deploy_path}/deploy-ssh-wrapper" if new_resource.deploy_key
   end
 
   execute "npm install && bower install && ember build -e #{new_resource.environment_name}" do
@@ -47,7 +81,8 @@ action :before_restart do
   end
 end
 
-action :after_restart {}
+action :after_restart do
+end
 
 def ember_deploy_path
   new_resource.path + '/ember'
