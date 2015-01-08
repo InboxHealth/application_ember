@@ -18,6 +18,6 @@
 #
 
 default['application_test']['root_dir'] = '/var/www'
-default['application_test']['owner']    = 'nobody'
+default['application_test']['owner']    = 'ember'
 default['application_test']['group']    = 'daemon'
 default['rvm']['rvmrc']['rvm_autolibs_flag'] = 'disabled'

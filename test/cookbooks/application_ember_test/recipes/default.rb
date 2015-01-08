@@ -16,7 +16,10 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-
+user_account node['application_test']['owner']
+include_recipe "nodejs"
+nodejs_npm 'ember-cli'
+nodejs_npm 'bower'
 include_recipe "application_ember_test::setup"
 
 app_name = "basic_app"
@@ -30,4 +33,10 @@ application app_name do
   path        app_dir
   owner       node['application_test']['owner']
   group       node['application_test']['group']
+  ember do
+    repository "https://github.com/InboxHealth/empty_ember_cli_app.git"
+    revision "c8b3a033ead7c0c28df671aa1b05e9bf288502f4"
+    distribution_link "ember_app_http_directory"
+    environment_name "production"
+  end
 end
