@@ -69,7 +69,7 @@ action :before_symlink do
   end
 
   if new_resource.link_dependencies
-    new_resource.link_dependencies.each |d| do
+    new_resource.link_dependencies.each do |d|
       execute "npm link #{d}" do
         cwd ember_deploy_path + '/current'
         user new_resource.owner
