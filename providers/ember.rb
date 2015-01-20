@@ -68,7 +68,7 @@ action :before_symlink do
     ssh_wrapper "#{ember_deploy_path}/deploy-ssh-wrapper" if new_resource.deploy_key
   end
 
-  execute "npm install && bower install && ember build -e #{new_resource.environment_name}" do
+  execute "npm install && bower install && npm link && ember build -e #{new_resource.environment_name}" do
     cwd ember_deploy_path + '/current'
     user new_resource.owner
     environment 'HOME' => '/home/' + new_resource.owner
@@ -91,5 +91,9 @@ action :after_restart do
 end
 
 def ember_deploy_path
-  new_resource.path + '/ember'
+  if new_resource.subfolder
+    new_resource.path + '/' + new_resource.subfolder
+  else
+    new_resource.path + '/ember'
+  end
 end
