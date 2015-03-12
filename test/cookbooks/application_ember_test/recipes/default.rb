@@ -22,6 +22,23 @@ nodejs_npm 'ember-cli'
 nodejs_npm 'bower'
 include_recipe "application_ember_test::setup"
 
+# Create a local NPM directory to prevent sudo/global path access and permissions requirements
+directory "/home/#{node['application_test']['owner']}/npm" do
+  owner node['application_test']['owner']
+  group node['application_test']['group']
+  mode '0755'
+  recursive true
+end
+
+# Create a .npmrc to specify our npm directory
+template "/home/#{node['application_test']['owner']}/.npmrc" do
+  source 'npmrc.erb'
+  owner node['application_test']['owner']
+  group node['application_test']['group']
+  variables(npm_dir: "/home/#{node['application_test']['owner']}/npm")
+end
+
+
 app_name = "basic_app"
 app_dir = "#{node['application_test']['root_dir']}/#{app_name}"
 
@@ -35,9 +52,10 @@ application app_name do
   group       node['application_test']['group']
   ember do
     repository "https://github.com/InboxHealth/empty_ember_cli_app.git"
-    revision "c8b3a033ead7c0c28df671aa1b05e9bf288502f4"
+    revision "2dc812a2799906c70188195f8c9e10a2094023cc"
     distribution_link "ember_app_http_directory"
     index_page_link "dist/index.html" => "ember_app.html"
     environment_name "production"
+    subfolder 'myemberapp'
   end
 end

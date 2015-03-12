@@ -7,3 +7,5 @@ attribute :deploy_key, :kind_of => String
 attribute :index_page_link, :kind_of => Hash
 attribute :subfolder, :kind_of => String
 attribute :link_dependencies, :kind_of => Array
+
+attr_accessor :ember_release_path
