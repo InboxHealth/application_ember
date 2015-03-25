@@ -18,10 +18,7 @@
 # limitations under the License.
 
 action :before_compile do
-end
-
-action :before_deploy do
-  if new_resource.deploy_key
+  unless new_resource.deploy_key.nil?
     directory ember_deploy_path do
       owner new_resource.owner
       group new_resource.group
@@ -50,6 +47,9 @@ action :before_deploy do
       variables :id => new_resource.name, :deploy_to => ember_deploy_path
     end
   end
+end
+
+action :before_deploy do
 
   @deploy_resource = send(:deploy_revision, ember_deploy_path) do
     repo new_resource.repository
