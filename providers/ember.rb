@@ -81,12 +81,6 @@ action :before_deploy do
     user new_resource.owner
     environment 'HOME' => '/home/' + new_resource.owner
   end
-
-  execute "npm install && bower install && npm link && ember build -e #{new_resource.environment_name}" do
-    cwd ember_deploy_path + '/current'
-    user new_resource.owner
-    environment 'HOME' => '/home/' + new_resource.owner
-  end
 end
 
 action :before_migrate do
