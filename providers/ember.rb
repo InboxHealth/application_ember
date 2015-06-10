@@ -66,18 +66,28 @@ action :before_deploy do
   provider.load_current_resource
   provider.release_path
   new_resource.ember_release_path = provider.release_path
-
+  current_version_path = ember_deploy_path + '/current'
   if new_resource.link_dependencies
     new_resource.link_dependencies.each do |d|
       execute "npm link #{d}" do
-        cwd ember_deploy_path + '/current'
+        cwd current_version_path
         user new_resource.owner
         environment 'HOME' => '/home/' + new_resource.owner
       end
     end
   end
+
+  # Workaround to prevent EMFILE exception related to:
+  # https://github.com/npm/npm/issues/3259
+  directory current_version_path + '/tests/unit' do
+    action :delete
+  end
+  directory current_version_path + '/tests/acceptance' do
+    action :delete
+  end
+
   execute "npm install && bower install && npm link && ember build -e #{new_resource.environment_name}" do
-    cwd ember_deploy_path + '/current'
+    cwd current_version_path
     user new_resource.owner
     environment 'HOME' => '/home/' + new_resource.owner
   end
