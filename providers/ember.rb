@@ -81,9 +81,11 @@ action :before_deploy do
   # https://github.com/npm/npm/issues/3259
   directory current_version_path + '/tests/unit' do
     action :delete
+    recursive true
   end
   directory current_version_path + '/tests/acceptance' do
     action :delete
+    recursive true
   end
 
   execute "npm install && bower install && npm link && ember build -e #{new_resource.environment_name}" do
